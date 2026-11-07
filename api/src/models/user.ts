@@ -7,5 +7,4 @@ const userSchema = new Schema({
   name: { type: String, required: true }
 }, { timestamps: true });
 
-// TODO 7: export const User = model("User", userSchema);
 export const User = model("User", userSchema);
