@@ -31,7 +31,7 @@ try{
   }
 
   day 3 -->
-
+{
 we use bcrypt for hashing password  
 const hashed = await bcrypt.hash(password, 10) 
 we made register auth route for registering user by name,email,password 
@@ -61,3 +61,9 @@ router.post("/register", async (req, res) => {
 
   res.status(201).json({id: user._id, name: user.name, email: user.email});
 });
+}
+
+day 4---->
+
+today i learned jwt access token stuff first when user log in backend server gives acces token and give to user i hit auth/login in postman get accestoken copy it then i had implemented api/me that is protected route and uses middleware requireauth that cheks accesstoken and verfiy it if it is true then and only then we get access to api/me otherwise unauthrized 
+

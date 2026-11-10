@@ -2,13 +2,15 @@ import { Router } from "express";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { User } from "../models/user.js";
+import jwt from "jsonwebtoken"
+import { env } from "../config/env.js";
 
 const router = Router();
 
 const registerSchema = z.object({
   name: z.string().min(2),
   email: z.email(),
-  password: z.string().min(8),
+  password: z.string().min(8).max(72),
 });
 
 const loginSchema = z.object({
@@ -42,7 +44,6 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-   
     const result = loginSchema.safeParse(req.body);
     if (!result.success) {
       return res.status(400).json({
@@ -50,34 +51,29 @@ router.post("/login", async (req, res) => {
         issues: result.error.issues,
       });
     }
-
     const { email, password } = result.data;
-
-   
     const user = await User.findOne({ email }).select("+password");
-
-   
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-
     const isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-
-  
     const userId = user._id;
-
+    const accessToken = jwt.sign({ sub: user.id }, env.JWT_SECRET, { expiresIn: "15m" });
+    
     return res.status(200).json({
       message: "Login successful",
       userId,
+      accessToken,
     });
   } catch (error) {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+
+
 
 
 export default router;
