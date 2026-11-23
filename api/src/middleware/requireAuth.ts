@@ -26,7 +26,7 @@ export function requireAuth(
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    req.userId = payload.sub as string;
+    req.userId = payload.sub;
 
     next();
   } catch {
